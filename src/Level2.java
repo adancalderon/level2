@@ -17,10 +17,10 @@ public class Level2 {
         int exit_row = generator.nextInt(maze.maze.length);
         int exit_col = generator.nextInt(maze.maze[0].length);
         maze.getExit(exit_row, exit_col);
-        
-        maze.drawMaze(row,col,exit_row,exit_col);
 
-        while(coords != "STOP") {
+
+        while(true) {
+            maze.drawMaze(row,col,exit_row,exit_col);
             System.out.println("Enter coordinates for flood fill (Ex: AC or ACC)");
              coords = scan.nextLine();
 
@@ -36,18 +36,11 @@ public class Level2 {
             } else {
                 char col_cord1 = input.charAt(1);
                 col_num = col_cord1 - 39;
-//            char col_cord2 = input.charAt(2);
-//            int col_num2 = col_cord2-65;
-//            System.out.println(col_num2);
-
             }
 
             currentPos = (row_num + "," + (col_num));
             System.out.println(currentPos);
             fill(currentPos);
-            maze.drawMaze(row, col, exit_row, exit_col);
-            System.out.println("Enter coordinates for flood fill (Ex: AC or ACC)");
-            coords = scan.nextLine();
 
         }
 
@@ -79,28 +72,35 @@ public class Level2 {
 
         maze.maze[row][col] = boundary; // make this position equal to the boundary
 
-            //LOOK UP and ENQUEUE IF GREEN (' ')
+            //LOOK UP
+        int up_row = row - 1;
+        if (up_row > -1) {
             try {
-                int up_row = row - 1; // checks cell directly above it
                 if (maze.maze[up_row][col] == target) { // if spot is equal to target
-                    q.add(up_row+","+col);  //enqueue up coordinate
+                    q.add(up_row + "," + col);  //enqueue up coordinate
                 }
 
-            } catch (ArrayIndexOutOfBoundsException e) {}
+            } catch (ArrayIndexOutOfBoundsException e) {
+            }
+        }
 
+        int down_row = row + 1;
+        if (down_row<19) {
             //LOOK DOWN and ENQUEUE IF GREEN TOO (' ")
             try {
-                int down_row = row + 1; // checks cell directly above it
+
                 if (maze.maze[down_row][col] == target) { // if spot is equal to target
-                    q.add(down_row+","+col);  //enqueue up coordinate
+                    q.add(down_row + "," + col);  //enqueue up coordinate
                 }
 
-            } catch (ArrayIndexOutOfBoundsException e) {}
-
+            } catch (ArrayIndexOutOfBoundsException e) {
+            }
+        }
 
             //LOOK LEFT and ENQUEUE IF GREEN TOO (' ")
+        int left_col = col - 1; // checks cell directly above it
+        if(left_col>-1)
             try {
-                int left_col = col - 1; // checks cell directly above it
                 if (maze.maze[row][left_col] == target) { // if spot is equal to target then
                     q.add(row+","+left_col);  //enqueue up coordinate
                 }
@@ -108,8 +108,9 @@ public class Level2 {
             } catch (ArrayIndexOutOfBoundsException e) {}
 
             //LOOK RIGHT and ENQUEUE IF GREEN TOO (' ")
+        int right_col = col + 1; // checks cell directly above it
+        if(right_col<50)
             try {
-                int right_col = col + 1; // checks cell directly above it
                 if (maze.maze[row][right_col] == target) { // if spot is equal to target
                     q.add(row+","+right_col);  //enqueue up coordinate
                 }
