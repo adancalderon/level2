@@ -4,103 +4,126 @@ public class Level2 {
     public static Maze maze = new Maze(19, 50); // creates a maze 20 x 51
     public static Random generator = new Random();
     public static Queue<String> q = new PriorityQueue<>(); //queue
+    public static Scanner scan = new Scanner(System.in);
+    public static String currentPos;
+    public static String coords;
     
  
-    public static void main(String[] args) {
-        int row = generator.nextInt(19);
-        int col = generator.nextInt(50);
+    public static void main(String[] args) throws ArrayIndexOutOfBoundsException {
+        int row = generator.nextInt(maze.maze.length);
+        int col = generator.nextInt(maze.maze[0].length);
         maze.getStart(row,col);
 
-        int exit_row = generator.nextInt(19);
-        int exit_col = generator.nextInt(50);
+        int exit_row = generator.nextInt(maze.maze.length);
+        int exit_col = generator.nextInt(maze.maze[0].length);
         maze.getExit(exit_row, exit_col);
         
         maze.drawMaze(row,col,exit_row,exit_col);
-        
-        while(true){
-            System.out.println("Enter coordinates for flood fill (Ex: AC or ACC)> " );
 
-            Scanner scan = new Scanner(System.in);
-            String input = scan.nextLine();
-            char a = input.charAt(0);
-            int a_n = (int)a - 65;
-            int b_n = 0;
+        while(coords != "STOP") {
+            System.out.println("Enter coordinates for flood fill (Ex: AC or ACC)");
+             coords = scan.nextLine();
 
-            if(input.length() == 2){
-                char b = input.charAt(1);
-                b_n = (int)b - 65;
+            String input = coords.toUpperCase();
+            char row_cord = input.charAt(0);
+            int row_num = row_cord - 65;
+            int col_num;
+
+            if (input.length() < 3) {
+                char col_cord = input.charAt(1);
+                col_num = col_cord - 65;
+
+            } else {
+                char col_cord1 = input.charAt(1);
+                col_num = col_cord1 - 39;
+//            char col_cord2 = input.charAt(2);
+//            int col_num2 = col_cord2-65;
+//            System.out.println(col_num2);
+
             }
-            if(input.length() == 3){
-                char b = input.charAt(1);
-                b_n = (int)b - 39;
-            }
 
-            int current_row = a_n;
-            int current_col = b_n;
+            currentPos = (row_num + "," + (col_num));
+            System.out.println(currentPos);
+            fill(currentPos);
+            maze.drawMaze(row, col, exit_row, exit_col);
+            System.out.println("Enter coordinates for flood fill (Ex: AC or ACC)");
+            coords = scan.nextLine();
 
-        System.out.println(current_row + "," + current_col);
-
-        for(int i=0; i<maze.maze.length; i++){
-            for(int j=0; j<maze.maze[0].length; j++){
-                fill(current_row,current_col);
-            }
-        }
-        while(!q.isEmpty()){
-            String str = q.remove();
-            String[] current = str.split(",");
-            String currentRow = current[0];
-            row = Integer.parseInt(currentRow);
-            String currentCol = current[1];
-            col = Integer.parseInt(currentCol);
-            maze.maze[row][col] = '.';
-        }
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        maze.drawMaze(row,col,exit_row,exit_col);
         }
 
     }
 
+    public static void fill (String currentPos) {
+        String[] current = currentPos.split(",");
+        String currentRow = current[0];
+        int row = Integer.parseInt(currentRow);
+        String currentCol = current[1];
+        int col = Integer.parseInt(currentCol);
 
-    public static void fill(int row,int col){
-        String s = row + "," + col;
-        char target = maze.maze[row][col];
+        //Looking at maze CURRENT POSITION MAKING IT a "Target Variable"
+        char target = maze.maze[row][col]; //target variable from currentPos
         char boundary;
-        if(target == '_'){
-            boundary = ' ';
+
+
+        if(target == '_'){   // if target is blue
+             boundary = ' ';  //boundary is green
         }
-        if(target == ' '){
-            boundary = '_';
+        else if (target == ' ') { // if target is green
+             boundary = '_'; // boundary is blue
         }
-        if(target == '@'){
-            boundary = '_';
+
+        else{
+            boundary = '.'; // should never be this
+            System.out.println("debuggg cell is neither space or underscore");
         }
-        if(target == 'E'){
-            boundary = ' ';
+
+        maze.maze[row][col] = boundary; // make this position equal to the boundary
+
+            //LOOK UP and ENQUEUE IF GREEN (' ')
+            try {
+                int up_row = row - 1; // checks cell directly above it
+                if (maze.maze[up_row][col] == target) { // if spot is equal to target
+                    q.add(up_row+","+col);  //enqueue up coordinate
+                }
+
+            } catch (ArrayIndexOutOfBoundsException e) {}
+
+            //LOOK DOWN and ENQUEUE IF GREEN TOO (' ")
+            try {
+                int down_row = row + 1; // checks cell directly above it
+                if (maze.maze[down_row][col] == target) { // if spot is equal to target
+                    q.add(down_row+","+col);  //enqueue up coordinate
+                }
+
+            } catch (ArrayIndexOutOfBoundsException e) {}
+
+
+            //LOOK LEFT and ENQUEUE IF GREEN TOO (' ")
+            try {
+                int left_col = col - 1; // checks cell directly above it
+                if (maze.maze[row][left_col] == target) { // if spot is equal to target then
+                    q.add(row+","+left_col);  //enqueue up coordinate
+                }
+
+            } catch (ArrayIndexOutOfBoundsException e) {}
+
+            //LOOK RIGHT and ENQUEUE IF GREEN TOO (' ")
+            try {
+                int right_col = col + 1; // checks cell directly above it
+                if (maze.maze[row][right_col] == target) { // if spot is equal to target
+                    q.add(row+","+right_col);  //enqueue up coordinate
+                }
+
+            } catch (ArrayIndexOutOfBoundsException e) {}
+
+                //STEP 4
+
+            if(!q.isEmpty()){
+               currentPos = q.remove();
+               fill(currentPos);  //recursive call from just dequeued position
+            }
         }
-        maze.maze[row][col] = '.';
-        
-        
-        if(maze.maze[row - 1][col] == maze.maze[row][col]){
-            s = (row-1) + "," + col;
-            q.add(s);
-        }
-        if(maze.maze[row + 1][col] == maze.maze[row][col]){
-            s = (row+1) + "," + col;
-            q.add(s);
-        }
-        if(maze.maze[row][col + 1] == maze.maze[row][col]){
-            s = row + "," + (col+1);
-            q.add(s);
-        }
-        if(maze.maze[row][col - 1] == maze.maze[row][col]){
-            s = row + "," + (col-1);
-            q.add(s);
-        }
-        
-       
+
+
     }
 
-}

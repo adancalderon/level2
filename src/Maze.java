@@ -38,24 +38,23 @@ public class Maze {
                 }
             }
         }
-        for(int i=0; i<maze.length; i++)
-        {
-            System.out.print(Character.toString(a));
-            for(int j=0; j<maze[0].length; j++){
-                if(maze[i][j] == '@'){
-                    System.out.print(BG_ANSI_GREEN + maze[i][j] + ANSI_RESET);
+        for (char[] chars : maze) {
+            System.out.print(a);
+            for (int j = 0; j < maze[0].length; j++) {
+                if (chars[j] == '@') {
+                    System.out.print(BG_ANSI_GREEN + chars[j] + ANSI_RESET);
                 }
-                if(maze[i][j] == 'E'){
-                    System.out.print(ANSI_BLUE + maze[i][j] + ANSI_RESET);
+                if (chars[j] == 'E') {
+                    System.out.print(ANSI_BLUE + chars[j] + ANSI_RESET);
                 }
-                if(maze[i][j] == '_'){
-                    System.out.print(ANSI_BLUE + maze[i][j] + ANSI_RESET);
+                if (chars[j] == '_') {
+                    System.out.print(ANSI_BLUE + chars[j] + ANSI_RESET);
                 }
-                if(maze[i][j] == ' '){
-                    System.out.print(BG_ANSI_GREEN + maze[i][j] + ANSI_RESET);
+                if (chars[j] == ' ') {
+                    System.out.print(BG_ANSI_GREEN + chars[j] + ANSI_RESET);
                 }
             }
-            System.out.print(Character.toString(a));
+            System.out.print(a);
             a++;
             System.out.println();
         }
@@ -63,14 +62,14 @@ public class Maze {
     }
     public void getStart(int row, int col){
         while(maze[row][col] == '_'){
-            row = generator.nextInt(19);
-            col = generator.nextInt(50); 
+            row = generator.nextInt(maze.length);
+            col = generator.nextInt(maze[0].length);
         }
     }
     public void getExit(int exit_row,int exit_col){
         while(maze[exit_row][exit_col] == ' '){
-            exit_row = generator.nextInt(19);
-            exit_col = generator.nextInt(50); 
+            exit_row = generator.nextInt(maze.length);
+            exit_col = generator.nextInt(maze[0].length);
         }
     }
 
